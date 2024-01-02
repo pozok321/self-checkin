@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div class="text-center">
         <input type="text" id="scanner">
         <div class="row" id="checkin-desktop" v-if="scanner_data.status == 200">
             <span>{{scanner_data.msg}}</span>
@@ -11,15 +11,16 @@
                     <img :src="scanner_data.guests_qr" class="qr-img">
                 </div>
                 <span>{{scanner_data.fullname}}</span>
+                <button @click="checkin_desktop()">Check-in!</button>
             </div>
         </div>
     </div>
 </template>
 
 <script>
+    import Swal from 'sweetalert2/dist/sweetalert2.js';
     import axios from "axios";
     import $ from "jquery";
-
     //Define Vue app
     export default {
         data() {
@@ -37,7 +38,7 @@
             };
         },
         components: {
-
+            
         },
         methods: {
             on_scanner() {
@@ -70,34 +71,23 @@
                 });
             },
 
-            on_print() {
-                setTimeout(function () {
-                    $("#scanner").trigger("focus");
-                }, 500)
-                let is_event = false; // for check just one event declaration
-                let input = document.getElementById("scanner");
-                var this_is = this
-                input.addEventListener("focus", function () {
-                    if (!is_event) {
-                        is_event = true;
-                        input.addEventListener("keypress", function (e) {
-                            // setTimeout(function () {
-                            if (e.keyCode == 13) {
-                                console.log("count", this_is.guests_token_scan, input.value)
-                                if (input.value !== this_is.guests_token_scan) {
-                                    this_is.checkin_withScanner(input.value)
-                                }
-                                input.select();
-                            }
-                            // }, 500)
-                        })
-                    }
-                });
-                document.addEventListener("keypress", function (e) {
-                    if (e.target.tagName !== "INPUT") {
-                        input.focus();
-                    }
-                });
+            print_qr() {
+                var form_data = new FormData();
+                form_data.append('guest_qr', this.guests_qr);
+                form_data.append('fullname', this.fullname);
+                form_data.append('checkin_counter', this.checkin_counter);
+                form_data.append('ticketclass_name', this.ticketclass_name);
+                axios({
+                        method: "post",
+                        url: "https://corp.undangin.com/apife/checkin/scan-desktop",
+                        data: form_data,
+                        headers: {
+                            "Content-Type": "multipart/form-data"
+                        },
+                    })
+                    .then(res => {
+                        this.on_scanner()
+                    });
             },
 
             checkin_withScanner(guests_token) {
@@ -153,11 +143,10 @@
                             var span = document.createElement("span");
                             span.innerHTML = "Welcome <br><b>" + res.data.fullname + "</b><br>" + res.data
                                 .ticketclass_name
-                            swal({
-                                    html: true,
-                                    icon: 'success',
-                                    title: res.data.msg,
-                                    content: span
+                                Swal.fire({
+                                title: "Success",
+                                text: "You are Checkin!",
+                                icon: "success"
                                 })
                                 .then((value) => {
                                     this.print_qr()
@@ -166,11 +155,10 @@
                             this.checkin_status = true
                             var span = document.createElement("span");
                             span.innerHTML = "<b>" + res.data.fullname + "</b><br>" + res.data.ticketclass_name
-                            swal({
-                                    html: true,
-                                    icon: 'warning',
-                                    title: res.data.msg,
-                                    content: span
+                            Swal.fire({
+                                title: "Failed",
+                                text: "Try Again",
+                                icon: "error"
                                 })
                                 .then((value) => {});
                         }
@@ -198,5 +186,9 @@
 
     .qr-img{
         margin: auto;
+    }
+
+    .text-center{
+        text-align: center;
     }
 </style>
