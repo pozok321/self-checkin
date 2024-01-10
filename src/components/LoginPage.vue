@@ -1,29 +1,38 @@
 <template>
-  <div class="login-page bg-light">
-    <div class="container">
-      <div class="h-100 width-50">
-        <!-- <form class="row g-4"> -->
-        <div class="form-group">
-          <label>Event KEY<span class="text-danger">*</span></label>
-          <div class="input-group">
-            <div class="input-group-text"><i class="bi bi-person-fill"></i></div>
-            <input type="number" class="form-control" placeholder="Enter Event Key" v-model="obj.events_token" />
+  <section class="vh-100" style="background-color:#F1F1F1">
+    <div class="d-flex justify-content-center align-items-center h-100">
+      <img src="../assets/image/circle-left.png" alt="circle-left" class="rounded-top-left">
+      <img src="../assets/image/circle-right.png" alt="circle-right" class="rounded-bottom-right">
+      <div class="col-12 col-md-6 col-lg-6 col-xl-4">
+        <div class="card">
+          <div class="justify-content-center d-md-flex">
+            <img src="../assets/image/logo-undangin-blue.svg" alt="logo undangin" class="logo-undangin">
+            <img src="../assets/image/line1.svg" alt="line 1" width="2" class="spacing-line">
+            <p class="login">Log in</p>
+          </div>
+          <p class="text-center mb-5 checkin-p">Welcome to Check In Self Service</p>
+          <div class="form-group">
+            <label class="checkin-p">Event KEY</label>
+            <div class="input-group">
+              <input type="number" class="form__input" placeholder="Enter Event Key" v-model="obj.events_token" />
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="checkin-p">Event ID</label>
+            <div class="input-group">
+              <input type="number" class="form__input" placeholder="Enter Event ID" v-model="obj.events_id" />
+            </div>
+          </div>
+          <div class="form-group">
+            <button class="button-login mt-4" @click="login_page()">Log In</button>
           </div>
         </div>
-        <div class="form-group">
-          <label>Event ID<span class="text-danger">*</span></label>
-          <div class="input-group">
-            <div class="input-group-text"><i class="bi bi-lock-fill"></i></div>
-            <input type="number" class="form-control" placeholder="Enter Event ID" v-model="obj.events_id" />
-          </div>
+        <div class="copyright text-center mt-4">
+          <p>Powered by Undangin | 2024</p>
         </div>
-        <div class="form-group">
-          <button class="button-login mt-4" @click="login_page()">login</button>
-        </div>
-        <!-- </form> -->
       </div>
     </div>
-  </div>
+  </section>
 </template>
 
 <script>
@@ -61,10 +70,10 @@
                 text: res.data.msg,
                 icon: "success",
               });
-              this.$router.push("/thescan");
+              this.$router.push("/agendapage");
             } else {
               Swal.fire({
-                title: "Incorrect Event Key/Event ID",
+                title: "Incorrect Event Key / Event ID",
                 text: res.data.msg,
                 icon: "warning",
               });
@@ -75,9 +84,54 @@
   };
 </script>
 
-<style>
+<style scoped>
+*{
+  font-family: Arial, Helvetica, sans-serif;
+  box-sizing: border-box;
+}
   a {
     text-decoration: none;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    margin-bottom: 0px;
+  }
+
+  .login {
+    font-size: 3rem;
+    color: #163C56;
+    margin-bottom: 0px;
+    font-weight: bold;
+  }
+
+  .checkin-p{
+    color: #807B7B;
+  }
+
+  .logo-undangin {
+    width: 200px;
+  }
+
+  .card {
+    border: none !important;
+    background-color: #F1F1F1;
+  }
+
+  .form__input {
+    background-color: #F1F1F1;
+    width: 100%;
+    border: 0px solid transparent;
+    border-radius: 0;
+    border-bottom: 1px solid #000;
+    padding: 1em .5em .5em;
+    padding-left: 2em;
+    outline: none;
+    margin: 1.5em auto;
+    transition: all .5s ease;
+    font-family: Helvetica;
   }
 
   .login-page {
@@ -88,24 +142,30 @@
     align-items: center;
   }
 
-  .form-right i {
-    font-size: 100px;
+  .copyright p{
+    color:#2E5D76;
+    font-size: 8pt;
   }
 
   .bg-darkblue {
     background-color: #1a283d;
   }
 
-  .rounded-top-left {
-    position: relative;
-    top: 0;
-    right: 0;
+  .spacing-line {
+    margin-left: 10px;
+    margin-right: 10px;
   }
 
-  .rounded-bottom-left {
-    position: relative;
-    bottom: 0;
+  .rounded-top-left {
+    position: absolute;
+    top: 0;
     left: 0;
+  }
+
+  .rounded-bottom-right {
+    position: absolute;
+    bottom: 0;
+    right: 0;
   }
 
   .width-50 {
@@ -113,12 +173,12 @@
     width: 50%;
   }
 
-  .button-login{
+  .button-login {
     width: 100%;
     background-color: #163C56;
     color: #fff;
     font-family: Helvetica;
-    border-radius: 20px;
+    border-radius: 50px;
     padding-top: 10px;
     padding-bottom: 10px;
     font-size: 16pt;
