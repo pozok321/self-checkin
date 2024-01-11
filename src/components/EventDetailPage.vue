@@ -1,0 +1,98 @@
+<template>
+    <section class="vh-100 bg-agenda-session" style="background-color:#F1F1F1">
+        <div class="d-flex justify-content-center align-items-center h-100">
+            <div class="col-12 col-md-6 col-lg-6 col-xl-8">
+                <div class="row text-center">
+                    <div class="col-sm-6">
+                        <div class="card-deck">
+                            <img src="../assets/image/event_banner.png" alt="event banner" width="100%">
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="card-deck">
+                            <div class="card-body">
+                                <p>you can choose for check in or registration</p>
+                                <div class="row">
+                                    <div class="checkin mt-5">
+                                        <button> Check in</button>
+                                    </div>
+                                    <div class="registration mt-3 mb-5">
+                                        <button> Registration </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</template>
+
+<script>
+    import Swal from 'sweetalert2'
+    import axios from 'axios'
+
+    export default {
+        data() {
+            return {
+                events_id: "",
+                prime_agenda: "",
+                showOnMedia: "",
+                venue_id: "",
+                agenda_id: "",
+                session_id: "",
+                agenda_name: "",
+                track_id: "",
+                session_topic: "",
+                session: "",
+                agenda: "",
+            };
+        },
+        components: {
+
+        },
+        methods: {
+            getCookie(name) {
+                var nameEQ = name + "=";
+                var ca = document.cookie.split(';');
+                for (var i = 0; i < ca.length; i++) {
+                    var c = ca[i];
+                    while (c.charAt(0) == ' ') c = c.substring(1, c.length);
+                    if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length, c.length);
+                }
+                return null;
+            },
+        },
+        mounted() {
+            this.events_id = $cookies.get("events_id");
+        },
+    };
+</script>
+
+<style scoped>
+    a {
+        text-decoration: none;
+    }
+
+    h1,
+    h2,
+    h3,
+    h4 {
+        margin-bottom: 0px;
+    }
+
+    .card-deck {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: stretch;
+    }
+
+    .bg-agenda-session {
+        position: relative;
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+        background: url(../assets/image/bg-agenda-session.png)
+    }
+</style>

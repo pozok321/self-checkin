@@ -6,36 +6,33 @@
                     <div class="col-sm-6">
                         <div class="card">
                             <div class="card-body">
-                                <img src="../assets/image/session.png" alt="session" width="50%">
-                                <p class="card-text session-agenda-title">Session</p>
+                                <img src="../assets/image/agenda.png" alt="agenda" width="100%">
                             </div>
                         </div>
                         <div class="input-group mt-3">
-                            <!-- <select class="form-select" id="inputGroupSelect02" v-for="agendaData in session" :key="agendaData.id">
-                                <option selected>Choose Session</option>
-                                <option value="1">One</option>
-                                <option value="2">Two</option>
-                                <option value="3">Three</option>
-                            </select> -->
+                            <select class="form-select" id="selectAgenda" v-model="agenda_id" @change="getSession()">
+                                <option v-for="agendaData in agenda" v-bind:value="agendaData.id">
+                                    {{ agendaData.agenda_name }}
+                                </option>
+                            </select>
                         </div>
                     </div>
                     <div class="col-sm-6">
                         <div class="card">
                             <div class="card-body">
-                                <img src="../assets/image/agenda.png" alt="agenda" width="50%">
-                                <p class="card-text session-agenda-title">Agenda</p>
+                                <img src="../assets/image/session.png" alt="session" width="100%">
                             </div>
                         </div>
                         <div class="input-group mt-3">
-                            <select class="form-select" id="selectAgenda">
-                                <option v-for="sessionData in session" v-bind:value="session.id">
+                            <select class="form-select" id="selectSession" v-model="session_id">
+                                <option v-for="sessionData in session" v-bind:value="sessionData.id">
                                     {{ sessionData.session_topic }}
                                 </option>
                             </select>
                         </div>
                     </div>
                     <div class="form-group">
-                        <button class="button-login mt-4">Confirm</button>
+                        <button class="button-login mt-4" @click="confirmAgendaSession()">Confirm</button>
                     </div>
                 </div>
             </div>
@@ -46,16 +43,16 @@
 <script>
     import Swal from 'sweetalert2'
     import axios from 'axios'
-    import $ from 'jquery'
 
     export default {
         data() {
             return {
-                events_id: "22817",
+                events_id: "",
                 prime_agenda: "",
                 showOnMedia: "",
                 venue_id: "",
-                agenda_id: "1",
+                agenda_id: "",
+                session_id: "",
                 agenda_name: "",
                 track_id: "",
                 session_topic: "",
@@ -67,6 +64,17 @@
 
         },
         methods: {
+            getCookie(name) {
+                var nameEQ = name + "=";
+                var ca = document.cookie.split(';');
+                for (var i = 0; i < ca.length; i++) {
+                    var c = ca[i];
+                    while (c.charAt(0) == ' ') c = c.substring(1, c.length);
+                    if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length, c.length);
+                }
+                return null;
+            },
+
             getSession() {
                 axios({
                         method: "GET",
@@ -77,13 +85,12 @@
                     })
                     .then(res => {
                         this.session = res.data;
-                        console.log(this.session, 'test123');
                     })
             },
             getAgenda() {
                 axios({
                         method: "GET",
-                        url: "/event/22817/agenda",
+                        url: "/event/" + this.events_id + "/agenda",
                         headers: {
                             "Content-Type": "text/plain"
                         },
@@ -94,30 +101,33 @@
             },
 
             confirmAgendaSession() {
-                var confirm = new FormData();
-                confirm.append("agenda_id", this.agenda_id);
-                confirm.append("events_id", this.agenda_id);
-                confirm.append("session_topic", this.session_topic);
                 axios({
-                        method: "POST",
-                        url: "event/22817/agenda/1/session/1",
-                        data: agenda,
+                        method: "GET",
+                        url: "/event/" + this.events_id + "/agenda/" + this.agenda_id + "/session/" + this
+                            .session_id,
                         headers: {
                             "Content-Type": "text/plain"
                         },
                     })
                     .then(res => {
-                        if (res.data.status === 200) {
-                            this.getAgenda();
-                            this.getSession();
+                        console.log(res.data)
+                        if (res.data !== "") {
+                            this.$router.push("/eventdetailpage");
+                        } else {
+                            Swal.fire({
+                                title: "Failed",
+                                text: res.data.msg,
+                                icon: "warning",
+                            });
                         }
                     })
 
             }
         },
         mounted() {
+            // this.events_id = this.getCookie(events_id);
+            this.events_id = $cookies.get("events_id");
             this.getAgenda();
-            this.getSession();
         },
     };
 </script>

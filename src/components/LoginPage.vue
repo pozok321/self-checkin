@@ -14,13 +14,14 @@
           <div class="form-group">
             <label class="checkin-p">Event KEY</label>
             <div class="input-group">
-              <input type="number" class="form__input" placeholder="Enter Event Key" v-model="obj.events_token" />
+              <input type="number" min="0" class="form__input" placeholder="Enter Event Key"
+                v-model="obj.events_token" />
             </div>
           </div>
           <div class="form-group">
             <label class="checkin-p">Event ID</label>
             <div class="input-group">
-              <input type="number" class="form__input" placeholder="Enter Event ID" v-model="obj.events_id" />
+              <input type="number" min="0" class="form__input" placeholder="Enter Event ID" v-model="obj.events_id" />
             </div>
           </div>
           <div class="form-group">
@@ -38,7 +39,6 @@
 <script>
   import Swal from 'sweetalert2'
   import axios from 'axios'
-  import $ from 'jquery'
 
   export default {
     data() {
@@ -53,6 +53,28 @@
 
     },
     methods: {
+      createCookie(name, value, day) {
+        if (day) {
+          let currentDate = new Date();
+          currentDate.setTime(currentDate.getTime() + (day * 24 * 60 * 60 * 1000));
+          var expires = "expires=" + currentDate.toGMTString();
+        } else {
+          var expires = "";
+        }
+        document.cookie = name + "=" + value + ";" + expires + "; path=/";
+      },
+
+      getCookie(name) {
+                var nameEQ = name + "=";
+                var ca = document.cookie.split(';');
+                for (var i = 0; i < ca.length; i++) {
+                    var c = ca[i];
+                    while (c.charAt(0) == ' ') c = c.substring(1, c.length);
+                    if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length, c.length);
+                }
+                return null;
+            },
+
       login_page() {
         axios({
             method: "post",
@@ -70,6 +92,7 @@
                 text: res.data.msg,
                 icon: "success",
               });
+              this.createCookie("events_id", this.obj.events_id, 1)
               this.$router.push("/agendapage");
             } else {
               Swal.fire({
@@ -85,10 +108,11 @@
 </script>
 
 <style scoped>
-*{
-  font-family: Arial, Helvetica, sans-serif;
-  box-sizing: border-box;
-}
+  * {
+    font-family: Arial, Helvetica, sans-serif;
+    box-sizing: border-box;
+  }
+
   a {
     text-decoration: none;
   }
@@ -107,7 +131,7 @@
     font-weight: bold;
   }
 
-  .checkin-p{
+  .checkin-p {
     color: #807B7B;
   }
 
@@ -142,8 +166,8 @@
     align-items: center;
   }
 
-  .copyright p{
-    color:#2E5D76;
+  .copyright p {
+    color: #2E5D76;
     font-size: 8pt;
   }
 

@@ -4,7 +4,8 @@ import axios from "axios";
 import { createApp } from "vue";
 import App from "./App.vue";
 import router from "./router";
-import Swal from 'sweetalert2'
+import Swal from 'sweetalert2';
+import VueCookies from "vue-cookies";
 
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap";
