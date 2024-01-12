@@ -100,6 +100,7 @@
                     })
             },
 
+
             confirmAgendaSession() {
                 axios({
                         method: "GET",

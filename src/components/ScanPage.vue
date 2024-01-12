@@ -3,27 +3,16 @@
         <div class="d-flex justify-content-center align-items-center h-100">
             <div class="col-12 col-md-6 col-lg-6 col-xl-8">
                 <div class="row text-center">
-                    <div class="col-sm-6">
-                        <div class="card">
-                            <div class="card-deck">
-                            <img src="../assets/image/event_banner.png" alt="event banner" width="100%">
+                    <div class="col-md-12 bg-white border-dash align-items-center row">
+                        <div class="col-md-6"> 
+                            <img src="../assets/image/qr-code.gif" alt="qr code" width="100%">
                         </div>
-                    </div>
-                    </div>
-                    <div class="col-sm-6 bg-white border-dash">
-                            <div class="card-body">
-                                <h3 class="mt-5">you can choose for check in or registration</h3>
-                                <div class="row">
-                                    <div class="checkin mt-5">
-                                        <span class="mx-2"><img src="../assets/image/check-in.png" alt="" srcset=""></span>
-                                        <button class="w-50 btn-checkin" @click="checkinPage()"> Check in</button>
-                                    </div>
-                                    <div class="registration mt-3 mb-5">
-                                        <span class="mx-2"><img src="../assets/image/registration.png" alt="" srcset=""></span>
-                                        <button class="w-50 btn-registration"> Registration </button>
-                                    </div>
-                                </div>
-                            </div>
+                        <div class="col-md-6">
+                            <h1>Tap your QR to scanner</h1>
+                            <span class="">
+                                Please wait till your QR show the details information
+                            </span>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -55,10 +44,6 @@
 
         },
         methods: {
-            
-            checkinPage() {
-                this.$router.push("/scanpage");
-            },
             getCookie(name) {
                 var nameEQ = name + "=";
                 var ca = document.cookie.split(';');
@@ -81,30 +66,36 @@
         text-decoration: none;
     }
 
-    h1,
-    h2,
-    h3,
-    h4 {
-        margin-bottom: 0px;
-        text-align: center;
+    span{
+        color: #888888;
+        font-family: Arial, Helvetica, sans-serif;
     }
 
-    .bg-white{
+    h1{
+        margin-bottom: 0px;
+        text-align: center;
+        font-weight: bold;
+        color: #163C56;
+        font-family: helvetica;
+    }
+
+    .bg-white {
         background-color: #fff;
     }
 
-    .border-dash{
-    border-style: dashed;
-    border-width: thin;
-    border-radius: 20px;
+    .border-dash {
+        border-style: dashed;
+        border-width: thin;
+        border-radius: 20px;
     }
+
     .card-deck {
         display: flex;
         flex-wrap: wrap;
         align-items: stretch;
     }
 
-    .btn-checkin{
+    .btn-checkin {
         background-color: #EBEBEB;
         color: #25516B;
         border-radius: 20px;
@@ -115,9 +106,10 @@
         padding: 10px;
         font-weight: bold;
     }
-    .btn-registration{
+
+    .btn-registration {
         background-color: #25516B;
-        color:#EBEBEB ;
+        color: #EBEBEB;
         border-radius: 20px;
         font-size: 20px;
         align-items: center;

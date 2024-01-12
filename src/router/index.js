@@ -27,6 +27,11 @@ const router = createRouter({
       name: "eventdetailpage",
       component: EventDetailView,
     },
+    {
+      path: "/scanpage",
+      name: "scanpage",
+      component: ScanView,
+    },
   ],
 });
 

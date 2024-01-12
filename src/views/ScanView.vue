@@ -1,8 +1,8 @@
 <script setup>
-import TheScan from "../components/TheScan.vue";
+import ScanPage from "../components/ScanPage.vue";
 </script>
 <template>
-  <TheScan />
+  <ScanPage />
 </template>
 
 <style scoped></style>
