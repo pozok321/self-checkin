@@ -100,6 +100,16 @@
                     })
             },
 
+            createCookie(name, value, day) {
+                if (day) {
+                    let currentDate = new Date();
+                    currentDate.setTime(currentDate.getTime() + (day * 24 * 60 * 60 * 1000));
+                    var expires = "expires=" + currentDate.toGMTString();
+                } else {
+                    var expires = "";
+                }
+                document.cookie = name + "=" + value + ";" + expires + "; path=/";
+            },
 
             confirmAgendaSession() {
                 axios({
@@ -113,6 +123,8 @@
                     .then(res => {
                         console.log(res.data)
                         if (res.data !== "") {
+                            this.createCookie("session_id", this.session_id, 1)
+                            this.createCookie("agenda_id", this.agenda_id, 1)
                             this.$router.push("/eventdetailpage");
                         } else {
                             Swal.fire({

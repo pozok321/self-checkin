@@ -55,9 +55,32 @@
 
         },
         methods: {
-            
             checkinPage() {
                 this.$router.push("/scanpage");
+            },
+            getSession() {
+                axios({
+                        method: "GET",
+                        url: "/event/" + this.events_id + "/agenda/" + this.agenda_id + "/session",
+                        headers: {
+                            "Content-Type": "text/plain"
+                        },
+                    })
+                    .then(res => {
+                        this.session = res.data;
+                    })
+            },
+            getAgenda() {
+                axios({
+                        method: "GET",
+                        url: "/event/" + this.events_id + "/agenda",
+                        headers: {
+                            "Content-Type": "text/plain"
+                        },
+                    })
+                    .then(res => {
+                        this.agenda = res.data;
+                    })
             },
             getCookie(name) {
                 var nameEQ = name + "=";

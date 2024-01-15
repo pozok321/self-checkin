@@ -1,20 +1,59 @@
 <template>
-    <div class="text-center">
-        <input type="text" id="scanner">
-        <div class="row" id="checkin-desktop" v-if="scanner_data.status == 200">
-            <span>{{scanner_data.msg}}</span>
-            <button @click="checkin_desktop()">Check-in!</button>
-        </div>
-        <div id="checkin-desktop" v-if="scanner_data.status == 202">
-            <div id="#image">
-                <div class="row box">
-                    <img :src="scanner_data.guests_qr" class="qr-img">
+    <section class="vh-100 bg-guest-detail" style="background-color:#F1F1F1">
+        <div class="d-flex justify-content-center align-items-center h-100">
+            <div class="col-12 col-md-6 col-lg-6 col-xl-6">
+                <div class="row">
+                    <div class="col-sm-6 bg-profile container-border-profile text-center">
+                        <div class="card-body text-center">
+                            <img src="../assets/image/guest.png" alt="guest" width="100" class="mt-4">
+                            <div class="row">
+                                <div class="checkin mb-4">
+                                    <h1>Muhammad Irvan</h1>
+                                    <span>muhammadirvan337@gmail.com</span>
+                                </div>
+                                <div class="registration">
+                                    <img src="../assets/image/qr.png" alt="guest" width="50%">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-6 bg-white container-border-details">
+                        <div class="card-body">
+                            <h2 class="mt-3 mx-5">Welcome to "event name"</h2>
+                            <div class="account-details mx-4">
+                                <h4>Mobile Phone</h4>
+                                <p>+628-51-7321-0951</p>
+                            </div>
+                            <div class="account-details mx-4">
+                                <h4>Company</h4>
+                                <p>Mitra Teleinformatika Perkasa</p>
+                            </div>
+                            <div class="account-details mx-4">
+                                <h4>Job Title</h4>
+                                <p>CEO/Director/Owner</p>
+                            </div>
+                            <div class="account-details mx-4">
+                                <h4>Company Title</h4>
+                                <p>Manufacture</p>
+                            </div>
+                            <div class="account-details mx-4">
+                                <h4>Ticket</h4>
+                                <p>Day 1 / QTY : 1</p>
+                            </div>
+                            <div class="account-details mx-4">
+                                <h4>Status</h4>
+                                <p>Cold</p>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-                <span>{{scanner_data.fullname}}</span>
-                <button @click="checkin_desktop()">Check-in!</button>
+            <div class="form-group text-center">
+            <span><img src="../assets/image/namaste.png" alt="thankyou" width="50"></span>
+            <button class="button-login mt-4" @click="login_page()">Log In</button>
+          </div>
             </div>
         </div>
-    </div>
+    </section>
 </template>
 
 <script>
@@ -38,157 +77,120 @@
             };
         },
         components: {
-            
+
         },
         methods: {
-            on_scanner() {
-                setTimeout(function () {
-                    $("#scanner").trigger("focus");
-                }, 500)
-                let is_event = false; // for check just one event declaration
-                let input = document.getElementById("scanner");
-                var this_is = this
-                input.addEventListener("focus", function () {
-                    if (!is_event) {
-                        is_event = true;
-                        input.addEventListener("keypress", function (e) {
-                            // setTimeout(function () {
-                            if (e.keyCode == 13) {
-                                console.log("count", this_is.guests_token_scan, input.value)
-                                if (input.value !== this_is.guests_token_scan) {
-                                    this_is.checkin_withScanner(input.value)
-                                }
-                                input.select();
-                            }
-                            // }, 500)
-                        })
-                    }
-                });
-                document.addEventListener("keypress", function (e) {
-                    if (e.target.tagName !== "INPUT") {
-                        input.focus();
-                    }
-                });
-            },
-
-            print_qr() {
-                var form_data = new FormData();
-                form_data.append('guest_qr', this.guests_qr);
-                form_data.append('fullname', this.fullname);
-                form_data.append('checkin_counter', this.checkin_counter);
-                form_data.append('ticketclass_name', this.ticketclass_name);
-                axios({
-                        method: "post",
-                        url: "https://corp.undangin.com/apife/checkin/scan-desktop",
-                        data: form_data,
-                        headers: {
-                            "Content-Type": "multipart/form-data"
-                        },
-                    })
-                    .then(res => {
-                        this.on_scanner()
-                    });
-            },
-
-            checkin_withScanner(guests_token) {
-                var form_data = new FormData();
-                form_data.append('evidenc', this.evidenc);
-                form_data.append('agenda_id', this.agenda_id);
-                form_data.append('track_id', this.track_id);
-                form_data.append('session_id', this.session_id);
-                form_data.append('guests_token', guests_token);
-                axios({
-                        method: "post",
-                        url: "https://corp.undangin.com/apife/checkin/scan-desktop",
-                        data: form_data,
-                        headers: {
-                            "Content-Type": "multipart/form-data"
-                        },
-                    })
-                    .then(res => {
-                        this.on_scanner()
-                        this.scanner_data = res.data
-                        this.guests_token_scan = this.scanner_data.guests_token
-                        if (this.scanner_data.status == 200) {
-                            this.checkin_status = false
-                        } else {
-                            this.checkin_status = true
-                        }
-                        // $('#auto_checkin_modal').modal('show');
-                    })
-            },
-            checkin_desktop() {
-                var form_data = new FormData();
-                form_data.append('evidenc', this.evidenc);
-                form_data.append('agenda_id', this.agenda_id);
-                form_data.append('track_id', this.track_id);
-                form_data.append('session_id', this.session_id);
-                form_data.append('status', this.scanner_data.status);
-                form_data.append('imei', this.scanner_data.imei);
-                form_data.append('guests_token', this.scanner_data.guests_token);
-                axios({
-                        method: "post",
-                        url: "https://corp.undangin.com/apife/checkin/desktop",
-                        data: form_data,
-                        headers: {
-                            "Content-Type": "multipart/form-data"
-                        },
-                    })
-                    .then(res => {
-                        this.on_scanner()
-                        if (res.data.status == 200) {
-                            this.checkin_status = true
-                            // this.get_guestlist()
-                            // this.getCheckinTablet()
-                            var span = document.createElement("span");
-                            span.innerHTML = "Welcome <br><b>" + res.data.fullname + "</b><br>" + res.data
-                                .ticketclass_name
-                                Swal.fire({
-                                title: "Success",
-                                text: "You are Checkin!",
-                                icon: "success"
-                                })
-                                .then((value) => {
-                                    this.print_qr()
-                                });
-                        } else {
-                            this.checkin_status = true
-                            var span = document.createElement("span");
-                            span.innerHTML = "<b>" + res.data.fullname + "</b><br>" + res.data.ticketclass_name
-                            Swal.fire({
-                                title: "Failed",
-                                text: "Try Again",
-                                icon: "error"
-                                })
-                                .then((value) => {});
-                        }
-                    })
-            },
 
         },
-        mounted() {
-            this.on_scanner();
-        },
+        mounted() {},
     };
 </script>
 
 
 <style>
-    .row {
-        display: flex;
+    a {
+        text-decoration: none;
     }
 
-    .box {
-        border: 1px solid #000;
-        width: 100%;
-        height: 100%;
+    h1,
+    h2,
+    h3,
+    h4 {
+        margin-bottom: 0px !important;
     }
 
-    .qr-img{
-        margin: auto;
+    .bg-guest-detail {
+        position: relative;
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+        background: url(../assets/image/bg-agenda-session.png)
     }
+
+    .button-login {
+    width: 50%;
+    background-color: #163C56;
+    color: #fff;
+    font-family: Helvetica;
+    border-radius: 50px;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    font-size: 16pt;
+    font-weight: bold;
+  }
+
+    .bg-profile {
+        background-image: linear-gradient(#5697B2, #1B6476);
+    }
+
+        .checkin h1,
+        span {
+            color: #fff;
+            font-family: Helvetica;
+        }
 
     .text-center{
         text-align: center;
+    }
+
+    .checkin span {
+        color: #fff;
+        font-family: Helvetica;
+        font-style: italic;
+    }
+
+    .border-dash {
+        border-width: thin;
+        border-radius: 20px;
+    }
+
+    .form-floating {
+        border: none !important;
+    }
+
+    .account-details{
+        position: relative;
+        padding: 10px;
+        border-bottom: 1px solid;
+        text-align: left;
+    }
+
+    .account-details h4{
+        color: #143C55;
+        font-weight: bold;
+        text-align: left;
+    }
+
+    .account-details p{
+        color: #1A283D;
+        text-align: left;
+        margin: 0 !important;
+    }
+
+    .form-text {
+        display: block;
+        width: 100%;
+        padding: 0.2rem 0.2rem;
+        font-size: 0.5rem;
+    }
+
+    .container-border-profile {
+        border-width: thin;
+        border-radius: 20px;
+        border-bottom: 20px solid;
+        border-color: #fff;
+    }
+
+    .container-border-details {
+        border-width: thin;
+        border-radius: 20px;
+        border-bottom: 20px solid;
+        border-color: #5697B2;
+    }
+
+    .card-deck {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: stretch;
     }
 </style>
