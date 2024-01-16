@@ -4,26 +4,24 @@
             <div class="col-12 col-md-6 col-lg-6 col-xl-8">
                 <div class="row text-center">
                     <div class="col-sm-6">
-                        <div class="card">
-                            <div class="card-deck">
-                            <img src="../assets/image/event_banner.png" alt="event banner" width="100%">
-                        </div>
-                    </div>
+                        <img :src=" 'https://private.undangin.id/' + session.event_poster" alt="event banner"
+                            width="100%" height="100%">
                     </div>
                     <div class="col-sm-6 bg-white border-dash">
-                            <div class="card-body">
-                                <h3 class="mt-5">you can choose for check in or registration</h3>
-                                <div class="row">
-                                    <div class="checkin mt-5">
-                                        <span class="mx-2"><img src="../assets/image/check-in.png" alt="" srcset=""></span>
-                                        <button class="w-50 btn-checkin" @click="checkinPage()"> Check in</button>
-                                    </div>
-                                    <div class="registration mt-3 mb-5">
-                                        <span class="mx-2"><img src="../assets/image/registration.png" alt="" srcset=""></span>
-                                        <button class="w-50 btn-registration"> Registration </button>
-                                    </div>
+                        <div class="card-body">
+                            <h3 class="mt-5">you can choose for check in or registration</h3>
+                            <div class="row">
+                                <div class="checkin mt-5">
+                                    <span class="mx-2"><img src="../assets/image/check-in.png" alt="" srcset=""></span>
+                                    <button class="w-50 btn-checkin" @click="checkinPage()"> Check in</button>
+                                </div>
+                                <div class="registration mt-3 mb-5">
+                                    <span class="mx-2"><img src="../assets/image/registration.png" alt=""
+                                            srcset=""></span>
+                                    <button class="w-50 btn-registration"> Registration </button>
                                 </div>
                             </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -38,6 +36,7 @@
     export default {
         data() {
             return {
+                url: '',
                 events_id: "",
                 prime_agenda: "",
                 showOnMedia: "",
@@ -61,7 +60,8 @@
             getSession() {
                 axios({
                         method: "GET",
-                        url: "/event/" + this.events_id + "/agenda/" + this.agenda_id + "/session",
+                        url: "/event/" + this.events_id + "/agenda/" + this.agenda_id + "/session/" + this
+                            .session_id,
                         headers: {
                             "Content-Type": "text/plain"
                         },
@@ -94,7 +94,21 @@
             },
         },
         mounted() {
+            this.url = axios.defaults.baseURL;
             this.events_id = $cookies.get("events_id");
+            this.session_id = $cookies.get("session_id");
+            this.agenda_id = $cookies.get("agenda_id");
+            if (this.events_id == null) {
+                Swal.fire({
+                    title: "Your Session is Expired!",
+                    icon: "warning",
+                });
+                setTimeout(2000);
+                this.$router.push("/");
+            } else {
+                this.getCookie()
+            }
+            this.getSession();
         },
     };
 </script>
@@ -112,22 +126,23 @@
         text-align: center;
     }
 
-    .bg-white{
+    .bg-white {
         background-color: #fff;
     }
 
-    .border-dash{
-    border-style: dashed;
-    border-width: thin;
-    border-radius: 20px;
+    .border-dash {
+        border-style: dashed;
+        border-width: thin;
+        border-radius: 20px;
     }
+
     .card-deck {
         display: flex;
         flex-wrap: wrap;
         align-items: stretch;
     }
 
-    .btn-checkin{
+    .btn-checkin {
         background-color: #EBEBEB;
         color: #25516B;
         border-radius: 20px;
@@ -138,9 +153,10 @@
         padding: 10px;
         font-weight: bold;
     }
-    .btn-registration{
+
+    .btn-registration {
         background-color: #25516B;
-        color:#EBEBEB ;
+        color: #EBEBEB;
         border-radius: 20px;
         font-size: 20px;
         align-items: center;

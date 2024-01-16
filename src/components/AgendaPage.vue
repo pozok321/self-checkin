@@ -58,6 +58,7 @@
                 session_topic: "",
                 session: "",
                 agenda: "",
+                event_poster:"",
             };
         },
         components: {
@@ -138,9 +139,18 @@
             }
         },
         mounted() {
-            // this.events_id = this.getCookie(events_id);
             this.events_id = $cookies.get("events_id");
             this.getAgenda();
+            if (this.events_id == null) {
+                Swal.fire({
+                    title: "Your Session is Expired!",
+                    icon: "warning",
+                });
+                setTimeout(2000);
+                this.$router.push("/");
+            } else {
+                this.getCookie()
+            }
         },
     };
 </script>

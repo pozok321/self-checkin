@@ -1,12 +1,12 @@
 <template>
-    <section class="vh-100 bg-agenda-session" style="background-color:#F1F1F1">
+    <section class="vh-100 bg-agenda-session" style="background-color:#F1F1F1" v-if="checkin_status == false">
         <div class="d-flex justify-content-center align-items-center h-100">
             <div class="col-12 col-md-6 col-lg-6 col-xl-8">
                 <div class="text-center">
                     <div class="col-md-12 bg-white container-border-bottom align-items-center row">
-                        <div class="col-md-6"> 
-                        <input type="hidden" id="scanner">
-                        <img src="../assets/image/qr-code.gif" alt="qr code" width="100%" class="img-qr">
+                        <div class="col-md-6">
+                            <input type="text" id="scanner" class="text-none">
+                            <img src="../assets/image/qr-code.gif" alt="qr code" width="100%" class="img-qr">
                         </div>
                         <div class="col-md-6 border-left">
                             <h1>Tap your QR to scanner</h1>
@@ -19,6 +19,57 @@
             </div>
         </div>
     </section>
+    <section class="vh-100 bg-guest-detail" style="background-color:#F1F1F1" v-else>
+        <div class="d-flex justify-content-center align-items-center h-100">
+                    <div class="col-md-6 bg-profile container-border-profile text-center">
+                        <div class="card-body text-center">
+                            <img src="../assets/image/guest.png" alt="guest" width="100" class="mt-4">
+                            <div class="row">
+                                <div class="checkin mb-4">
+                                    <h1>Muhammad Irvan</h1>
+                                    <span>muhammadirvan337@gmail.com</span>
+                                </div>
+                                <div class="registration">
+                                    <img src="../assets/image/qr.png" alt="guest" width="50%">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6 bg-white container-border-details">
+                        <div class="card-body">
+                            <h2 class="mt-3 mx-5">Welcome to "event name"</h2>
+                            <div class="account-details mx-4">
+                                <h4>Mobile Phone</h4>
+                                <p>+628-51-7321-0951</p>
+                            </div>
+                            <div class="account-details mx-4">
+                                <h4>Company</h4>
+                                <p>Mitra Teleinformatika Perkasa</p>
+                            </div>
+                            <div class="account-details mx-4">
+                                <h4>Job Title</h4>
+                                <p>CEO/Director/Owner</p>
+                            </div>
+                            <div class="account-details mx-4">
+                                <h4>Company Title</h4>
+                                <p>Manufacture</p>
+                            </div>
+                            <div class="account-details mx-4">
+                                <h4>Ticket</h4>
+                                <p>Day 1 / QTY : 1</p>
+                            </div>
+                            <div class="account-details mx-4">
+                                <h4>Status</h4>
+                                <p>Cold</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            <div class="form-group text-center">
+            <span><img src="../assets/image/namaste.png" alt="thankyou" width="50"></span>
+            <button class="button-login mt-4" @click="finish()">Finish</button>
+          </div>
+    </section>
 </template>
 
 <script>
@@ -29,17 +80,20 @@
     export default {
         data() {
             return {
-                baseUrl: '',
-                url: '',
-                evidenc: 'U1c4WnMxd0drVEhMUUV3QTJKSzRQZz09',
-                agenda_id: '2',
-                track_id: '1',
-                session_id: '1',
-                status: '',
+                checkin_status: false,
+                obj : {
+                evidenc: '',
+                agenda_id: '',
+                track_id: '',
+                session_id: '',
                 guests_token: '',
-                imei: '',
-                scanner_data: '',
-            };
+                security_level: '',
+                multiple_session_entry: '',
+                scanner_name: 'SS',
+                security_level:'',
+                qr_setting: ''
+            }
+         };
         },
         components: {
 
@@ -87,16 +141,16 @@
                 let is_event = false; // for check just one event declaration
                 let input = document.getElementById("scanner");
                 var this_is = this;
-                
                 input.addEventListener("focus", function () {
                     if (!is_event) {
                         is_event = true;
                         input.addEventListener("keypress", function (e) {
                             // setTimeout(function () {
                             if (e.keyCode == 13) {
-                                console.log("count", this_is.guests_token_scan, input.value)
-                                if (input.value !== this_is.guests_token_scan) {
-                                    this.$router.push("/guestdetailpage");
+                                // console.log("count", this_is.obj.guests_token_scan, input.value)
+                                // this.$router.push("/guestdetailpage");
+                                
+                                if (input.value !== this_is.obj.guests_token_scan) {
                                     this_is.checkin_withScanner(input.value)
                                 }
                                 input.select();
@@ -112,19 +166,14 @@
                 });
             },
 
-            checkin_withScanner(guests_token) {
-                var form_data = new FormData();
-                form_data.append('evidenc', this.evidenc);
-                form_data.append('agenda_id', this.agenda_id);
-                form_data.append('track_id', this.track_id);
-                form_data.append('session_id', this.session_id);
-                form_data.append('guests_token', guests_token);
+            checkin_withScanner(value) {
+                this.obj.guests_token = value;
                 axios({
                         method: "post",
-                        url: "https://corp.undangin.com/apife/checkin/scan-desktop",
-                        data: form_data,
+                        url: "/guest/scan/",
+                        data: this.obj,
                         headers: {
-                            "Content-Type": "multipart/form-data"
+                            "Content-Type": "text/plain"
                         },
                     })
                     .then(res => {
@@ -139,57 +188,21 @@
                         // $('#auto_checkin_modal').modal('show');
                     })
             },
-            checkin_desktop() {
-                var form_data = new FormData();
-                form_data.append('evidenc', this.evidenc);
-                form_data.append('agenda_id', this.agenda_id);
-                form_data.append('track_id', this.track_id);
-                form_data.append('session_id', this.session_id);
-                form_data.append('status', this.scanner_data.status);
-                form_data.append('imei', this.scanner_data.imei);
-                form_data.append('guests_token', this.scanner_data.guests_token);
-                axios({
-                        method: "post",
-                        url: "https://corp.undangin.com/apife/checkin/desktop",
-                        data: form_data,
-                        headers: {
-                            "Content-Type": "multipart/form-data"
-                        },
-                    })
-                    .then(res => {
-                        this.on_scanner()
-                        if (res.data.status == 200) {
-                            this.checkin_status = true
-                            // this.get_guestlist()
-                            // this.getCheckinTablet()
-                            var span = document.createElement("span");
-                            span.innerHTML = "Welcome <br><b>" + res.data.fullname + "</b><br>" + res.data
-                                .ticketclass_name
-                                Swal.fire({
-                                title: "Success",
-                                text: "You are Checkin!",
-                                icon: "success"
-                                })
-                                .then((value) => {
-                                    this.print_qr()
-                                });
-                        } else {
-                            this.checkin_status = true
-                            var span = document.createElement("span");
-                            span.innerHTML = "<b>" + res.data.fullname + "</b><br>" + res.data.ticketclass_name
-                            Swal.fire({
-                                title: "Failed",
-                                text: "Try Again",
-                                icon: "error"
-                                })
-                                .then((value) => {});
-                        }
-                    })
-            },
         },
         mounted() {
-            this.events_id = $cookies.get("events_id");
+            this.obj.events_id = $cookies.get("events_id");
+            this.obj.session_id = $cookies.get("session_id");
+            this.obj.agenda_id = $cookies.get("agenda_id");
+            if (this.obj.events_id == null) {
+                Swal.fire({
+                    title: "Your Session is Expired!",
+                    icon: "warning",
+                });
+                setTimeout(2000);
+                this.$router.push("/");
+            } else {
             this.on_scanner();
+            }
         },
     };
 </script>
@@ -199,12 +212,12 @@
         text-decoration: none;
     }
 
-    span{
+    span {
         color: #888888;
         font-family: Arial, Helvetica, sans-serif;
     }
 
-    h1{
+    h1 {
         margin-bottom: 0px;
         text-align: center;
         font-weight: bold;
@@ -212,28 +225,39 @@
         font-family: helvetica;
     }
 
-    .img-qr{
-        padding: 4rem;
-    margin-left: 2rem;
+    .text-none{
+        border: none;
+        color: #fff;
+        outline-style: none;
     }
+
+    #scanner:focus{
+        border-color: #fff;
+        color: #fff;
+    }
+
+    .img-qr {
+        padding: 4rem;
+    }
+
     .bg-white {
         background-color: #fff;
     }
 
     .container-border-bottom {
-    border-width: thin;
-    border-radius: 20px;
-    border-bottom: 10px solid;
-    border-color: #5697B2;
+        border-width: thin;
+        border-radius: 20px;
+        border-bottom: 10px solid;
+        border-color: #5697B2;
     }
 
-    .border-left{
-    border-left: 10px solid;
-    align-items: left;
-    height: 50;
-    padding-top: 50px;
-    padding-bottom: 50px;
-    border-color: #163C56;
+    .border-left {
+        border-left: 10px solid;
+        align-items: left;
+        height: 50;
+        padding-top: 50px;
+        padding-bottom: 50px;
+        border-color: #163C56;
     }
 
     .card-deck {
@@ -274,4 +298,6 @@
         background-repeat: no-repeat;
         background: url(../assets/image/bg-agenda-session.png)
     }
+
+    
 </style>

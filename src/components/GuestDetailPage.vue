@@ -49,7 +49,7 @@
                 </div>
             <div class="form-group text-center">
             <span><img src="../assets/image/namaste.png" alt="thankyou" width="50"></span>
-            <button class="button-login mt-4" @click="login_page()">Log In</button>
+            <button class="button-login mt-4" @click="finish()">Finish</button>
           </div>
             </div>
         </div>
@@ -66,10 +66,10 @@
             return {
                 baseUrl: '',
                 url: '',
-                evidenc: 'U1c4WnMxd0drVEhMUUV3QTJKSzRQZz09',
-                agenda_id: '2',
-                track_id: '1',
-                session_id: '1',
+                evidenc: '',
+                agenda_id: '',
+                track_id: '',
+                session_id: '',
                 status: '',
                 guests_token: '',
                 imei: '',
