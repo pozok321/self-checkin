@@ -48,12 +48,23 @@
                 session_topic: "",
                 session: "",
                 agenda: "",
+                multiple_session_entry: "",
             };
         },
         components: {
 
         },
         methods: {
+            createCookie(name, value, day) {
+                if (day) {
+                    let currentDate = new Date();
+                    currentDate.setTime(currentDate.getTime() + (day * 24 * 60 * 60 * 1000));
+                    var expires = "expires=" + currentDate.toGMTString();
+                } else {
+                    var expires = "";
+                }
+                document.cookie = name + "=" + value + ";" + expires + "; path=/";
+            },
             checkinPage() {
                 this.$router.push("/scanpage");
             },
@@ -68,6 +79,12 @@
                     })
                     .then(res => {
                         this.session = res.data;
+                        this.multiple_session_entry = this.session.multiple_session_entry;
+                        this.qr_setting = this.session.qr_setting;
+                        // this.security_level = this.session.security_level;
+                        this.createCookie("multiple_session_entry", this.multiple_session_entry);
+                        // this.createCookie("qr_setting", this.qr_setting);
+                        // this.createCookie("security_level", this.security_level);
                     })
             },
             getAgenda() {
@@ -103,7 +120,7 @@
                     title: "Your Session is Expired!",
                     icon: "warning",
                 });
-                setTimeout(2000);
+                setTimeout(1000);
                 this.$router.push("/");
             } else {
                 this.getCookie()

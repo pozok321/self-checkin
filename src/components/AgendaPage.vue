@@ -59,6 +59,7 @@
                 session: "",
                 agenda: "",
                 event_poster:"",
+                multiple_session_entry:"",
             };
         },
         components: {
@@ -124,8 +125,8 @@
                     .then(res => {
                         console.log(res.data)
                         if (res.data !== "") {
-                            this.createCookie("session_id", this.session_id, 1)
-                            this.createCookie("agenda_id", this.agenda_id, 1)
+                            this.createCookie("session_id", this.session_id)
+                            this.createCookie("agenda_id", this.agenda_id)
                             this.$router.push("/eventdetailpage");
                         } else {
                             Swal.fire({
