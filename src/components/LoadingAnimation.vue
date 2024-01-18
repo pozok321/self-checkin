@@ -1,11 +1,7 @@
 <template>
     <span class="loader"></span>
   </template>
-  
-  <script>
-   
-  </script>
-  
+
   <style scoped>
     .loader {
     width: 48px;
@@ -21,7 +17,8 @@
     @keyframes rotation {
     0% {
         transform: rotate(0deg);
-    }
+    } 
+    
     100% {
         transform: rotate(360deg);
     }

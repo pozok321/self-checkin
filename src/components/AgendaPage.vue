@@ -58,8 +58,8 @@
                 session_topic: "",
                 session: "",
                 agenda: "",
-                event_poster:"",
-                multiple_session_entry:"",
+                event_poster: "",
+                multiple_session_entry: "",
             };
         },
         components: {
@@ -136,7 +136,6 @@
                             });
                         }
                     })
-
             }
         },
         mounted() {

@@ -26,7 +26,7 @@
               <div class="card-body">
                 <img src="../assets/image/guest.png" alt="guest" width="100" class="mt-5" />
                 <div class="row">
-                  <div class="checkin mb-4">
+                  <div class="checkin mb-4" id="printableArea">
                     <h1>{{ scanner_data.guest.fullname }}</h1>
                     <span>Guest ID : {{ scanner_data.guest.guests_id }}</span>
                   </div>
@@ -85,17 +85,15 @@
       return {
         checkin_status: false,
         obj: {
-          evidenc: "",
           agenda_id: "",
-          track_id: "",
           session_id: "",
           guests_token: "",
           security_level: "",
           multiple_session_entry: "",
           scanner_name: "SS",
-          security_level: "",
+          security_level: "L",
           qr_setting: "",
-          session: "",
+          events_id: "",
         },
       };
     },
@@ -133,7 +131,6 @@
           this.agenda = res.data;
         });
       },
-
       on_scanner() {
         setTimeout(function () {
           $("#scanner").trigger("focus");
@@ -147,7 +144,7 @@
             input.addEventListener("keypress", function (e) {
               // setTimeout(function () {
               if (e.keyCode == 13) {
-                console.log("count", this_is.obj.guests_token_scan, input.value)
+                // console.log("count", this_is.obj.guests_token_scan, input.value)
                 if (input.value != this_is.obj.guests_token_scan) {
                   this_is.checkin_withScanner(input.value);
                 }
@@ -163,12 +160,11 @@
           }
         });
       },
-
       checkin_withScanner(value) {
         this.obj.guests_token = value;
         axios({
           method: "post",
-          url: "/guest/scan/",
+          url: "/guest/scan",
           data: this.obj,
           headers: {
             "Content-Type": "text/plain",
@@ -177,12 +173,24 @@
           this.on_scanner();
           this.scanner_data = res.data;
           this.guests_token_scan = this.scanner_data.guests_token;
-          if (this.scanner_data.status == 200) {
+          if (this.scanner_data.message === 'Welcome') {
             this.checkin_status = false;
+            this.on_print();
           } else {
             this.checkin_status = true;
           }
         });
+      },
+
+      on_print() {
+        var divToPrint = document.getElementById('printableArea');
+        var newWin = window.open('', 'Print-Window');
+        newWin.document.open();
+        newWin.document.write('<html><body onload="window.print()">' + divToPrint.innerHTML + '</body></html>');
+        newWin.document.close();
+        setTimeout(function () {
+          newWin.close();
+        }, 10);
       },
       finishScan() {
         this.$router.go("/eventdetailpage");
@@ -192,8 +200,8 @@
       this.obj.events_id = $cookies.get("events_id");
       this.obj.session_id = $cookies.get("session_id");
       this.obj.agenda_id = $cookies.get("agenda_id");
-      this.multiple_session_entry = $cookies.get("multiple_session_entry");
-      this.qr_setting = $cookies.get("qr_setting");
+      this.obj.multiple_session_entry = $cookies.get("multiple_session_entry");
+      this.obj.qr_setting = $cookies.get("qr_setting");
       this.getSession();
       if (this.obj.events_id == null) {
         Swal.fire({

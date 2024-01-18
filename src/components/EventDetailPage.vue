@@ -81,10 +81,8 @@
                         this.session = res.data;
                         this.multiple_session_entry = this.session.multiple_session_entry;
                         this.qr_setting = this.session.qr_setting;
-                        // this.security_level = this.session.security_level;
                         this.createCookie("multiple_session_entry", this.multiple_session_entry);
-                        // this.createCookie("qr_setting", this.qr_setting);
-                        // this.createCookie("security_level", this.security_level);
+                        this.createCookie("qr_setting", this.qr_setting);
                     })
             },
             getAgenda() {
