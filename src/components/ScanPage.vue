@@ -24,11 +24,11 @@
           <div class="col-sm-6 d-flex align-items-stretch">
             <div class="card bg-profile container-border-profile h-100 w-100">
               <div class="card-body">
-                <img src="../assets/image/guest.png" alt="guest" width="100" class="mt-5" />
+                <img src="../assets/image/guest.png" alt="guest" width="100" class="mt-2" />
                 <div class="row">
-                  <div class="checkin mb-4" id="printableArea">
+                  <div class="checkin mb-4 text-center"  id="areaprint">
                     <h1>{{ scanner_data.guest.fullname }}</h1>
-                    <span>Guest ID : {{ scanner_data.guest.guests_id }}</span>
+                    <p>Guest ID : {{ scanner_data.guest.guests_id }}</p>
                   </div>
                   <div class="registration">
                     <img src="../assets/image/qr.png" alt="guest" width="50%" />
@@ -60,10 +60,11 @@
               </div>
             </div>
           </div>
-          <div class="row text-center align-center p-5">
-            <div class="col-md-6"><img src="../assets/image/thankyou.png" alt="thankyou" width="100" /><span class="thankyou">Thankyou !!</span></div>
+          <div class="row text-center align-center p-2">
+            <div class="col-md-6"><img src="../assets/image/thankyou.png" alt="thankyou" width="100" /><span
+                class="thankyou">Thankyou !!</span></div>
             <div class="col-md-6">
-              <button class="button-login mt-4 w-100" @click="finishScan()">Finish</button>
+              <button class="button-finish mt-4 w-100" @click="finishScan()">Finish</button>
             </div>
           </div>
         </div>
@@ -73,338 +74,306 @@
 </template>
 
 <script>
-import Swal from "sweetalert2";
-import axios from "axios";
-import $ from "jquery";
+  import Swal from "sweetalert2";
+  import axios from "axios";
+  import $ from "jquery";
 
-export default {
-  data() {
-    return {
-      checkin_status: false,
-      obj: {
-        agenda_id: "",
-        session_id: "",
-        guests_token: "",
-        security_level: "",
-        multiple_session_entry: "",
-        scanner_name: "SS",
-        security_level: "L",
-        qr_setting: "",
-        events_id: "",
+  export default {
+    data() {
+      return {
+        checkin_status: false,
+        obj: {
+          agenda_id: "",
+          session_id: "",
+          guests_token: "",
+          security_level: "",
+          multiple_session_entry: "",
+          scanner_name: "SS",
+          security_level: "L",
+          qr_setting: "",
+          events_id: "",
+        },
+      };
+    },
+    components: {},
+    methods: {
+      getCookie(name) {
+        var nameEQ = name + "=";
+        var ca = document.cookie.split(";");
+        for (var i = 0; i < ca.length; i++) {
+          var c = ca[i];
+          while (c.charAt(0) == " ") c = c.substring(1, c.length);
+          if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length, c.length);
+        }
+        return null;
       },
-    };
-  },
-  components: {},
-  methods: {
-    getCookie(name) {
-      var nameEQ = name + "=";
-      var ca = document.cookie.split(";");
-      for (var i = 0; i < ca.length; i++) {
-        var c = ca[i];
-        while (c.charAt(0) == " ") c = c.substring(1, c.length);
-        if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length, c.length);
-      }
-      return null;
-    },
-    getSession() {
-      axios({
-        method: "GET",
-        url: "/event/" + this.obj.events_id + "/agenda/" + this.obj.agenda_id + "/session/" + this.obj.session_id,
-        headers: {
-          "Content-Type": "text/plain",
-        },
-      }).then((res) => {
-        this.session = res.data;
-      });
-    },
-    getAgenda() {
-      axios({
-        method: "GET",
-        url: "/event/" + this.events_id + "/agenda",
-        headers: {
-          "Content-Type": "text/plain",
-        },
-      }).then((res) => {
-        this.agenda = res.data;
-      });
-    },
-    on_scanner() {
-      setTimeout(function () {
-        $("#scanner").trigger("focus");
-      }, 500);
-      let is_event = false; // for check just one event declaration
-      let input = document.getElementById("scanner");
-      var this_is = this;
-      input.addEventListener("focus", function () {
-        if (!is_event) {
-          is_event = true;
-          input.addEventListener("keypress", function (e) {
-            // setTimeout(function () {
-            if (e.keyCode == 13) {
-              // console.log("count", this_is.obj.guests_token_scan, input.value)
-              if (input.value != this_is.obj.guests_token_scan) {
-                this_is.checkin_withScanner(input.value);
+      getSession() {
+        axios({
+          method: "GET",
+          url: "/event/" + this.obj.events_id + "/agenda/" + this.obj.agenda_id + "/session/" + this.obj.session_id,
+          headers: {
+            "Content-Type": "text/plain",
+          },
+        }).then((res) => {
+          this.session = res.data;
+        });
+      },
+      getAgenda() {
+        axios({
+          method: "GET",
+          url: "/event/" + this.events_id + "/agenda",
+          headers: {
+            "Content-Type": "text/plain",
+          },
+        }).then((res) => {
+          this.agenda = res.data;
+        });
+      },
+      on_scanner() {
+        setTimeout(function () {
+          $("#scanner").trigger("focus");
+        }, 500);
+        let is_event = false; // for check just one event declaration
+        let input = document.getElementById("scanner");
+        var this_is = this;
+        input.addEventListener("focus", function () {
+          if (!is_event) {
+            is_event = true;
+            input.addEventListener("keypress", function (e) {
+              // setTimeout(function () {
+              if (e.keyCode == 13) {
+                // console.log("count", this_is.obj.guests_token_scan, input.value)
+                if (input.value != this_is.obj.guests_token_scan) {
+                  this_is.checkin_withScanner(input.value);
+                }
+                input.select();
               }
-              input.select();
-            }
-            // }, 500)
-          });
-        }
-      });
-      document.addEventListener("keypress", function (e) {
-        if (e.target.tagName !== "INPUT") {
-          input.focus();
-        }
-      });
-    },
-    checkin_withScanner(value) {
-      this.obj.guests_token = value;
-      axios({
-        method: "post",
-        url: "/guest/scan",
-        data: this.obj,
-        headers: {
-          "Content-Type": "text/plain",
-        },
-      }).then((res) => {
-        this.on_scanner();
-        this.scanner_data = res.data;
-        this.guests_token_scan = this.scanner_data.guests_token;
-        if (this.scanner_data.message === "Welcome") {
-          this.checkin_status = true;
-          this.on_print();
-        } else {
-          this.checkin_status = false;
-        }
-      });
-    },
+              // }, 500)
+            });
+          }
+        });
+        document.addEventListener("keypress", function (e) {
+          if (e.target.tagName !== "INPUT") {
+            input.focus();
+          }
+        });
+      },
+      
+      checkin_withScanner(value) {
+        this.obj.guests_token = value;
+        axios({
+          method: "post",
+          url: "/guest/scan",
+          data: this.obj,
+          headers: {
+            "Content-Type": "text/plain",
+          },
+        }).then((res) => {
+          this.on_scanner();
+          this.scanner_data = res.data;
+          this.guests_token_scan = this.scanner_data.guests_token;
+          if (this.scanner_data.message === "Welcome") {
+            this.checkin_status = true;
+            this.on_print();
+          } else {
+            this.checkin_status = false;
+          }
+        });
+      },
 
-    on_print() {
-      setTimeout(function () {
-        const printContents = document.getElementById("printableArea").innerHTML;
-        const originalContents = document.body.innerHTML;
-        document.body.innerHTML = printContents;
-        window.print();
-        document.body.innerHTML = originalContents;
-      }, 500);
+      on_print() {
+        setTimeout(function () {
+          var contents = document.getElementById("areaprint").innerHTML;
+            var frame1 = document.createElement('iframe');
+           frame1.name = "frame1";
+           frame1.style.position = "absolute";
+           frame1.style.top = "-1000000px";
+           document.body.appendChild(frame1);
+            var frameDoc = frame1.contentWindow ? frame1.contentWindow : frame1.contentDocument.document ? frame1.contentDocument.document : frame1.contentDocument;
+           frameDoc.document.open();
+           frameDoc.document.write('<html><head><title>DIV Contents</title>');
+           frameDoc.document.write('</head><body>');
+           frameDoc.document.write(contents);
+           frameDoc.document.write('</body></html>');
+           frameDoc.document.close();
+           setTimeout(function () {
+               window.frames["frame1"].focus();
+               window.frames["frame1"].print();
+               document.body.removeChild(frame1);
+           }, 500);
+           window.onload=function(){self.print();} 
+            return false;
+        }, 500);
+      },
+      finishScan() {
+        this.$router.go("/eventdetailpage");
+      },
     },
-    finishScan() {
-      this.$router.go("/eventdetailpage");
+    mounted() {
+      this.obj.events_id = $cookies.get("events_id");
+      this.obj.session_id = $cookies.get("session_id");
+      this.obj.agenda_id = $cookies.get("agenda_id");
+      this.obj.multiple_session_entry = $cookies.get("multiple_session_entry");
+      this.obj.qr_setting = $cookies.get("qr_setting");
+      this.getSession();
+      if (this.obj.events_id == null) {
+        Swal.fire({
+          title: "Your Session is Expired!",
+          icon: "warning",
+        });
+        setTimeout(100);
+        this.$router.push("/");
+      } else {
+        this.on_scanner();
+      }
     },
-  },
-  mounted() {
-    this.obj.events_id = $cookies.get("events_id");
-    this.obj.session_id = $cookies.get("session_id");
-    this.obj.agenda_id = $cookies.get("agenda_id");
-    this.obj.multiple_session_entry = $cookies.get("multiple_session_entry");
-    this.obj.qr_setting = $cookies.get("qr_setting");
-    this.getSession();
-    if (this.obj.events_id == null) {
-      Swal.fire({
-        title: "Your Session is Expired!",
-        icon: "warning",
-      });
-      setTimeout(100);
-      this.$router.push("/");
-    } else {
-      this.on_scanner();
-    }
-  },
-};
+  };
 </script>
 
 <style scoped>
-a {
-  text-decoration: none;
-}
+  a {
+    text-decoration: none;
+  }
 
-span {
-  color: #888888;
-  font-family: Arial, Helvetica, sans-serif;
-}
+  span {
+    color: #888888;
+    font-family: Arial, Helvetica, sans-serif;
+  }
 
-h1 {
-  margin-bottom: 0px;
-  text-align: center;
-  font-weight: bold;
-  color: #163c56;
-  font-family: helvetica;
-}
+  h1 {
+    margin-bottom: 0px;
+    text-align: center;
+    font-weight: bold;
+    color: #163c56;
+    font-family: helvetica;
+  }
 
-.text-none {
-  border: none;
-  color: #fff;
-  outline-style: none;
-}
+  .text-none {
+    border: none;
+    color: #fff;
+    outline-style: none;
+  }
 
-#scanner:focus {
-  border-color: #fff;
-  color: #fff;
-}
+  #scanner:focus {
+    border-color: #fff;
+    color: #fff;
+  }
 
-.img-qr {
-  padding: 4rem;
-}
+  .img-qr {
+    padding: 4rem;
+  }
 
-.thankyou {
-  color: #315568;
-  font-size: 18pt;
-}
+  .thankyou {
+    color: #315568;
+    font-size: 18pt;
+  }
 
-.bg-white {
-  background-color: #fff;
-}
+  .bg-white {
+    background-color: #fff;
+  }
 
-.container-border-bottom {
-  border-width: thin;
-  border-radius: 20px;
-  border-bottom: 10px solid;
-  border-color: #5697b2;
-}
+  .container-border-bottom {
+    border-width: thin;
+    border-radius: 20px;
+    border-bottom: 10px solid;
+    border-color: #5697b2;
+  }
 
-.border-left {
-  border-left: 10px solid;
-  align-items: left;
-  height: 50;
-  padding-top: 50px;
-  padding-bottom: 50px;
-  border-color: #163c56;
-}
+  .border-left {
+    border-left: 10px solid;
+    align-items: left;
+    height: 50;
+    padding-top: 50px;
+    padding-bottom: 50px;
+    border-color: #163c56;
+  }
 
-.card-deck {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: stretch;
-}
+  .card-deck {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: stretch;
+  }
 
-.btn-checkin {
-  background-color: #ebebeb;
-  color: #25516b;
-  border-radius: 20px;
-  font-size: 20px;
-  align-items: center;
-  text-align: center;
-  border: none;
-  padding: 10px;
-  font-weight: bold;
-}
+  .button-finish {
+    width: 50%;
+    background-color: #163c56;
+    color: #fff;
+    font-family: Helvetica;
+    border-radius: 50px;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    font-size: 16pt;
+    font-weight: bold;
+  }
 
-.btn-registration {
-  background-color: #25516b;
-  color: #ebebeb;
-  border-radius: 20px;
-  font-size: 20px;
-  align-items: center;
-  text-align: center;
-  border: none;
-  padding: 10px;
-  font-weight: bold;
-}
+  .bg-profile {
+    background-image: linear-gradient(#5697b2, #1b6476);
+  }
 
-.bg-agenda-session {
-  position: relative;
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
-  background: url(../assets/image/bg-agenda-session.png);
-}
+  .checkin h1,
+  span {
+    color: #fff;
+    font-family: Helvetica;
+  }
 
-.bg-guest-detail {
-  position: relative;
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
-  background: url(../assets/image/bg-agenda-session.png);
-}
+  .text-center {
+    text-align: center;
+  }
 
-.button-login {
-  width: 50%;
-  background-color: #163c56;
-  color: #fff;
-  font-family: Helvetica;
-  border-radius: 50px;
-  padding-top: 10px;
-  padding-bottom: 10px;
-  font-size: 16pt;
-  font-weight: bold;
-}
+  .align-center {
+    text-align: center;
+  }
 
-.bg-profile {
-  background-image: linear-gradient(#5697b2, #1b6476);
-}
+  .checkin span {
+    color: #fff;
+    font-family: Helvetica;
+    font-style: italic;
+  }
 
-.checkin h1,
-span {
-  color: #fff;
-  font-family: Helvetica;
-}
+  .account-details {
+    position: relative;
+    padding: 10px;
+    border-bottom: 1px solid;
+    text-align: left;
+  }
 
-.text-center {
-  text-align: center;
-}
+  .account-details h4 {
+    color: #143c55;
+    font-weight: bold;
+    text-align: left;
+  }
 
-.align-center {
-  text-align: center;
-}
+  .account-details p {
+    color: #1a283d;
+    text-align: left;
+    margin: 0 !important;
+  }
 
-.checkin span {
-  color: #fff;
-  font-family: Helvetica;
-  font-style: italic;
-}
+  .form-text {
+    display: block;
+    width: 100%;
+    padding: 0.2rem 0.2rem;
+    font-size: 0.5rem;
+  }
 
-.border-dash {
-  border-width: thin;
-  border-radius: 20px;
-}
+  .container-border-profile {
+    border-width: thin;
+    border-radius: 20px;
+    border-bottom: 20px solid;
+    border-color: #fff;
+  }
 
-.form-floating {
-  border: none !important;
-}
+  .container-border-details {
+    border-width: thin;
+    border-radius: 20px;
+    border-bottom: 20px solid;
+    border-color: #5697b2;
+  }
 
-.account-details {
-  position: relative;
-  padding: 10px;
-  border-bottom: 1px solid;
-  text-align: left;
-}
-
-.account-details h4 {
-  color: #143c55;
-  font-weight: bold;
-  text-align: left;
-}
-
-.account-details p {
-  color: #1a283d;
-  text-align: left;
-  margin: 0 !important;
-}
-
-.form-text {
-  display: block;
-  width: 100%;
-  padding: 0.2rem 0.2rem;
-  font-size: 0.5rem;
-}
-
-.container-border-profile {
-  border-width: thin;
-  border-radius: 20px;
-  border-bottom: 20px solid;
-  border-color: #fff;
-}
-
-.container-border-details {
-  border-width: thin;
-  border-radius: 20px;
-  border-bottom: 20px solid;
-  border-color: #5697b2;
-}
-
-.card-deck {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: stretch;
-}
+  .card-deck {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: stretch;
+  }
+  
 </style>

@@ -87,13 +87,13 @@
             console.log(res.data)
             if (res.data != false) {
               Swal.fire({
-                title: "Success!",
+                title: "Login Success!",
                 text: res.data.msg,
                 icon: "success",
               });
               this.createCookie("events_id", this.obj.events_id)
               this.$router.push("/agendapage");
-            } else {
+            } else if(res.data == ""){
               Swal.fire({
                 title: "Incorrect Event Key / Event ID",
                 text: res.data.msg,
