@@ -12,12 +12,11 @@
                             <h3 class="mt-5">you can choose for check in or registration</h3>
                             <div class="row">
                                 <div class="checkin mt-5">
-                                    <span class="mx-2"><img src="../assets/image/check-in.png" alt="" srcset=""></span>
+                                    <span class="mx-2"><img src="../assets/image/check-in.png" alt="checkin-icon"></span>
                                     <button class="w-50 btn-checkin" @click="checkinPage()"> Check in</button>
                                 </div>
                                 <div class="registration mt-3 mb-5">
-                                    <span class="mx-2"><img src="../assets/image/registration.png" alt=""
-                                            srcset=""></span>
+                                    <span class="mx-2"><img src="../assets/image/registration.png" alt="registration-icon"></span>
                                     <button class="w-50 btn-registration"> Registration </button>
                                 </div>
                             </div>

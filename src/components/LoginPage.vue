@@ -91,7 +91,7 @@
                 text: res.data.msg,
                 icon: "success",
               });
-              this.createCookie("events_id", this.obj.events_id)
+              this.createCookie("events_id", this.obj.events_id);
               this.$router.push("/agendapage");
             } else if(res.data == ""){
               Swal.fire({

@@ -1,7 +1,7 @@
 <template>
   <section class="vh-100 bg-agenda-session" style="background-color: #f1f1f1" v-if="checkin_status == false">
     <div class="d-flex justify-content-center align-items-center h-100">
-      <div class="col-12 col-md-6 col-lg-6 col-xl-8">
+      <div class="col-12 col-md-6 col-lg-8 col-xl-8">
         <div class="text-center">
           <div class="col-md-12 bg-white container-border-bottom align-items-center row">
             <div class="col-md-6">
@@ -29,6 +29,7 @@
                   <div class="checkin mb-4 text-center"  id="areaprint">
                     <h1>{{ scanner_data.guest.fullname }}</h1>
                     <p>Guest ID : {{ scanner_data.guest.guests_id }}</p>
+                    <p>Seat QTY : {{ scanner_data.guest.seatRsvpQty }} </p>
                   </div>
                   <div class="registration">
                     <img src="../assets/image/qr.png" alt="guest" width="50%" />
@@ -86,7 +87,6 @@
           agenda_id: "",
           session_id: "",
           guests_token: "",
-          security_level: "",
           multiple_session_entry: "",
           scanner_name: "SS",
           security_level: "L",
@@ -174,11 +174,15 @@
           this.guests_token_scan = this.scanner_data.guests_token;
           if (this.scanner_data.message === "Welcome") {
             this.checkin_status = true;
-            this.on_print();
+            // this.on_print();
           } else {
             this.checkin_status = false;
           }
         });
+      },
+
+      finishScan() {
+        this.$router.push("/eventdetailpage");
       },
 
       on_print() {
@@ -205,9 +209,7 @@
             return false;
         }, 500);
       },
-      finishScan() {
-        this.$router.go("/eventdetailpage");
-      },
+     
     },
     mounted() {
       this.obj.events_id = $cookies.get("events_id");
