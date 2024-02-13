@@ -30,9 +30,9 @@
                     <h1>{{ scanner_data.guest.fullname }}</h1>
                     <p>Guest ID : {{ scanner_data.guest.guests_id }}</p>
                     <p>Seat QTY : {{ scanner_data.guest.seatRsvpQty }} </p>
+                    <div class="registration">
+                    <img src="../assets/image/qr.png" alt="guest" class="img-print" />
                   </div>
-                  <div class="registration">
-                    <img src="../assets/image/qr.png" alt="guest" width="50%" />
                   </div>
                 </div>
               </div>
@@ -78,6 +78,7 @@
   import Swal from "sweetalert2";
   import axios from "axios";
   import $ from "jquery";
+  import { HtmlToPaper } from "vue-html-to-paper";
 
   export default {
     data() {
@@ -174,7 +175,7 @@
           this.guests_token_scan = this.scanner_data.guests_token;
           if (this.scanner_data.message === "Welcome") {
             this.checkin_status = true;
-            // this.on_print();
+            this.on_print();
           } else {
             this.checkin_status = false;
           }
@@ -208,9 +209,14 @@
            window.onload=function(){self.print();} 
             return false;
         }, 500);
+        // HtmlToPaper.on_print(this.$areaprint);
       },
      
     },
+    directives:{
+      HtmlToPaper
+    },
+
     mounted() {
       this.obj.events_id = $cookies.get("events_id");
       this.obj.session_id = $cookies.get("session_id");
@@ -263,6 +269,10 @@
 
   .img-qr {
     padding: 4rem;
+  }
+  .img-print{
+    max-width: inherit;
+    width: inherit;
   }
 
   .thankyou {

@@ -48,6 +48,7 @@
                 session: "",
                 agenda: "",
                 multiple_session_entry: "",
+                qr_setting:""
             };
         },
         components: {
@@ -70,8 +71,7 @@
             getSession() {
                 axios({
                         method: "GET",
-                        url: "/event/" + this.events_id + "/agenda/" + this.agenda_id + "/session/" + this
-                            .session_id,
+                        url: "/event/" + this.events_id + "/agenda/" + this.agenda_id + "/session/" + this.session_id,
                         headers: {
                             "Content-Type": "text/plain"
                         },
@@ -108,7 +108,6 @@
             },
         },
         mounted() {
-            this.url = axios.defaults.baseURL;
             this.events_id = $cookies.get("events_id");
             this.session_id = $cookies.get("session_id");
             this.agenda_id = $cookies.get("agenda_id");

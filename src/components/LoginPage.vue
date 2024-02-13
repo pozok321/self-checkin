@@ -10,16 +10,16 @@
             <img src="../assets/image/line1.svg" alt="line 1" width="2" class="spacing-line">
             <p class="login">Log in</p>
           </div>
-          <p class="text-center mb-5 checkin-p">Welcome to Check In Self Service</p>
+          <p class="text-center mb-5">Welcome to Check In Self Service</p>
           <div class="form-group">
-            <label class="checkin-p">Event KEY</label>
+            <label class="event-key" id="event_key">Event KEY</label>
             <div class="input-group">
               <input type="number" min="0" class="form__input" placeholder="Enter Event Key"
                 v-model="obj.events_token" />
             </div>
           </div>
           <div class="form-group">
-            <label class="checkin-p">Event ID</label>
+            <label class="event-id" id="event_id">Event ID</label>
             <div class="input-group">
               <input type="number" min="0" class="form__input" placeholder="Enter Event ID" v-model="obj.events_id" />
             </div>
@@ -37,11 +37,15 @@
 </template>
 
 <script>
+  import Loading from 'vue-loading-overlay';
+  import 'vue-loading-overlay/dist/css/index.css';
   import Swal from 'sweetalert2';
   import axios from 'axios';
   export default {
     data() {
       return {
+        isLoading: false,
+        fullPage: true,
         obj: {
           events_token: '',
           events_id: '',
@@ -49,9 +53,40 @@
       };
     },
     components: {
-
+      Loading
     },
     methods: {
+      toggle_full_screen() {
+        if ((document.fullScreenElement && document.fullScreenElement !== null) || (!document.mozFullScreen && !document
+            .webkitIsFullScreen)) {
+          if (document.documentElement.requestFullScreen) {
+            document.documentElement.requestFullScreen();
+          } else if (document.documentElement.mozRequestFullScreen) {
+            /* Firefox */
+            document.documentElement.mozRequestFullScreen();
+          } else if (document.documentElement.webkitRequestFullScreen) {
+            /* Chrome, Safari & Opera */
+            document.documentElement.webkitRequestFullScreen(Element.ALLOW_KEYBOARD_INPUT);
+          } else if (document.msRequestFullscreen) {
+            /* IE/Edge */
+            document.documentElement.msRequestFullscreen();
+          }
+        } else {
+          if (document.cancelFullScreen) {
+            document.cancelFullScreen();
+          } else if (document.mozCancelFullScreen) {
+            /* Firefox */
+            document.mozCancelFullScreen();
+          } else if (document.webkitCancelFullScreen) {
+            /* Chrome, Safari and Opera */
+            document.webkitCancelFullScreen();
+          } else if (document.msExitFullscreen) {
+            /* IE/Edge */
+            document.msExitFullscreen();
+          }
+        }
+      },
+
       createCookie(name, value, day) {
         if (day) {
           let currentDate = new Date();
@@ -64,15 +99,15 @@
       },
 
       getCookie(name) {
-                var nameEQ = name + "=";
-                var ca = document.cookie.split(';');
-                for (var i = 0; i < ca.length; i++) {
-                    var c = ca[i];
-                    while (c.charAt(0) == ' ') c = c.substring(1, c.length);
-                    if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length, c.length);
-                }
-                return null;
-            },
+        var nameEQ = name + "=";
+        var ca = document.cookie.split(';');
+        for (var i = 0; i < ca.length; i++) {
+          var c = ca[i];
+          while (c.charAt(0) == ' ') c = c.substring(1, c.length);
+          if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length, c.length);
+        }
+        return null;
+      },
 
       login_page() {
         axios({
@@ -84,8 +119,8 @@
             },
           })
           .then(res => {
-            console.log(res.data)
             if (res.data != false) {
+              this.isLoading = true;
               Swal.fire({
                 title: "Login Success!",
                 text: res.data.msg,
@@ -93,7 +128,8 @@
               });
               this.createCookie("events_id", this.obj.events_id);
               this.$router.push("/agendapage");
-            } else if(res.data == ""){
+              this.toggle_full_screen();
+            } else if (res.data == "") {
               Swal.fire({
                 title: "Incorrect Event Key / Event ID",
                 text: res.data.msg,
@@ -130,7 +166,8 @@
     font-weight: bold;
   }
 
-  .checkin-p {
+  .event-id,
+  .event-key {
     color: #807B7B;
   }
 
